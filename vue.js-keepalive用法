@@ -61,6 +61,8 @@ router设置
   <router-view></router-view>
 </keep-alive>
 includedComponents动态设置即可   
+
+https://segmentfault.com/a/1190000008123035
     
     
     
