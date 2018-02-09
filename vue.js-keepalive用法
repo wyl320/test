@@ -67,4 +67,84 @@ https://segmentfault.com/q/1010000007767010
 http://www.cnblogs.com/webbest/p/6722780.html
 http://www.jianshu.com/p/42429f4d8f9e
 
-    
+
+##1 vue-router
+        声明式导航
+        <router-link :to="{}"></router-link> 
+        编程式导航
+        router.push()
+        router.push('index') 字符串
+        router.push({path:'index'}) 对象
+        router.push({name:'index',params:{user:'123'}})  命名的路由
+        router.push({path:'index',query:{user:'123'}})   // 带查询参数，变成 /index?user=123
+
+        注意
+        router.push({ path: '/user', params: { userId }}) // -> /user  这里的params会被忽略
+        const userId = 123
+        router.push({ name: 'user', params: { userId }}) // -> /user/123
+        router.push({ path: `/user/${userId}` }) // -> /user/123
+        总结
+        params是路由的一部分,必须要有。query是拼接在url后面的参数，没有也没关系
+        params一旦设置在路由，params就是路由的一部分，如果这个路由有params传参，但是在跳转的时候没有传这个参数，会导致跳转失败或者页面会没有内容。
+        比如：跳转path:'/router1/:id'
+        <router-link :to="{ name:'router1',params: { id: status}}" >正确</router-link>
+        <router-link :to="{ name:'router1',params: { id2: status}}">错误</router-link>
+
+
+
+
+
+##2 生命周期
+        根组件实例：8个 (beforeCreate、created、beforeMount、mounted、beforeUpdate、updated、beforeDestroy、destroyed)
+        组件实例：8个 (beforeCreate、created、beforeMount、mounted、beforeUpdate、updated、beforeDestroy、destroyed)
+        全局路由钩子：2个 (beforeEach、afterEach)
+        组件路由钩子：3个 (beforeRouteEnter、beforeRouteUpdate、beforeRouteLeave)
+        指令的周期： 5个 (bind、inserted、update、componentUpdated、unbind)
+        beforeRouteEnter的next所对应的周期
+        nextTick所对应的周期
+        
+        beforeCreate 此时组件的选项还未挂载，因此无法访问methods，data,computed上的方法或数据
+        
+        created 实例已完成以下的配置：数据观测(data observer)，属性和方法的运算， watch/event 事件回调。然而，挂载阶段还没开始，$el 属性目前不可见
+        这是一个常用的生命周期，因为你可以调用methods中的方法、改变data中的数据，并且修改可以通过vue的响应式绑定体现在页面上、获取computed中的计算属性等等
+        通常我们可以在这里对实例进行预处理。
+        也有一些童鞋喜欢在这里发ajax请求，值得注意的是，这个周期中是没有什么方法来对实例化过程进行拦截的。
+        因此假如有某些数据必须获取才允许进入页面的话，并不适合在这个页面发请求。
+        建议在组件路由勾子beforeRouteEnter中来完成。
+        
+        beforeMonut
+        在挂载开始之前被调用：相关的 render 函数首次被调用。
+        
+        mounted
+        el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$el 也在文档内。
+        1.在这个周期内，对data的改变可以生效。但是要进下一轮的dom更新，dom上的数据才会更新。
+        2.这个周期可以获取 dom。 之前的论断有误，感谢@冯银超 和 @AnHour的提醒
+        3.beforeRouteEnter的next的勾子比mounted触发还要靠后
+        4.指令的生效在mounted周期之前
+        
+        beforeUpdate
+        数据更新时调用，发生在虚拟 DOM 重新渲染和打补丁之前。你可以在这个钩子中进一步地更改状态，这不会触发附加的重渲染过程。
+
+        updated
+        由于数据更改导致的虚拟 DOM 重新渲染和打补丁，在这之后会调用该钩子。当这个钩子被调用时，组件 DOM 已经更新，所以你现在可以执行依赖于 DOM 的操作。然而在大多数情况下，你应该避免在此期间更改状态，因为这可能会导致更新无限循环。
+
+        beforeDestroy
+        实例销毁之前调用。在这一步，实例仍然完全可用。
+        1.这一步还可以用this来获取实例。
+        2.一般在这一步做一些重置的操作。比如清除掉组件中的 定时器 和 监听的dom事件
+        
+        destroyed
+        Vue 实例销毁后调用。调用后，Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。
+        
+        router.beforeEach
+        作用于所有路由切换，一般在main.js里面定义
+        
+        
+        Vue.nextTick
+        created () {
+            this.$nextTick(() => {
+              console.log('nextTick')  //回调里的函数一直到真实的dom渲染结束后，才执行
+            })
+            console.log('组件：created')
+        },
+        
