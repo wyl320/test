@@ -2,3 +2,33 @@ https://pan.baidu.com/s/1lrzyGL2hrPcjqTnFFlaLuw  （xqk2）
 https://github.com/githubchen001/vue-lesson
 
 链接:https://pan.baidu.com/s/1PmJkoQFlYPXxsKmEWq5kRw  密码:8pu3
+
+$.ajax({
+                url: url,
+                type: "POST",
+                data: form,
+                processData:false,    //必须
+                contentType:false,    //必须
+                xhr: function() {        //ajax进度条，直接拿过去就可以用
+                    var xhr = $.ajaxSettings.xhr();
+                    if (xhr.upload) {
+                        xhr.upload.addEventListener("progress", function (e) {
+                            var loaded = e.loaded; //已经上传大小情况
+                            var tot = e.total; //附件总大小
+                            var per = Math.floor(100 * loaded / tot); //已经上传的百分比
+                            console.log(per)
+                            $('.progress-bar').css('width',per+'%');   //这里指的是进度条的宽度等于完成的百分比
+                            // $.fn.progressInit.draw(per + '%'); //绘制经度条
+                        }, false);
+                        return xhr;
+                    }
+                },
+                success: function () {
+
+                },
+                error: function () {
+                    
+                }
+            })
+
+ajax上传获取进度
